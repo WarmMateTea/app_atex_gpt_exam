@@ -1,0 +1,62 @@
+[collection: appUserCollection]
+userData/appUser {
+    uid;
+    email;
+
+    // vvvv não presentes no User do firebase; precisa de um fetch
+    name;
+
+    exams[];
+}
+
+[SUB-LISTA]
+// cada usuário tem apenas um grupo de provas
+exam {
+    uid;
+    name;
+    date;
+    courseUID;
+    subjectUID;
+
+    questionAggregatorUID;
+}
+
+[collection: questionAggregatorCollection]
+// agrega todas as questões de uma prova (UID pode ser o mesmo do exam)
+questionAggregator {
+    uid;
+
+    questions[];
+}
+
+[SUB-LISTA]
+question {
+    uid;
+    questionBody;
+    gptAnswer;
+
+    answerAggregatorUID;
+}
+
+// agrega todas as estruturas "resposta" dos estudantes para uma questão (UID pode ser o mesmo da question)
+answerAggregator {
+    uid;
+
+    answers[];
+}
+
+[SUB-LISTA]
+answer {
+    uid;
+    questionUID;
+    studentUID;
+
+    studentAnswer;
+    correctionGPT;
+    rating;
+}
+
+
+////////////////////////////////////////////////////
+Nota: um array [] pressupõe que os objetos estão diretamente aninhados dentro do documento que os contém.
+Já uma UID é apenas um ponto de referência para outra solicitação que puxa um conjuto de dados.

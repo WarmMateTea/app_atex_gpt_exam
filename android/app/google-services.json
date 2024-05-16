@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1017167425832",
+    "project_id": "gpt-exam",
+    "storage_bucket": "gpt-exam.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017167425832:android:0e9d2e165ce1e6fef6a01d",
+        "android_client_info": {
+          "package_name": "com.unidev.app_atex_gpt_exam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdIpyt3JiTMgOoOI4GQtu7nj_TwshRezw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
