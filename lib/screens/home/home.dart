@@ -12,28 +12,51 @@ import 'package:app_atex_gpt_exam/services/database.dart';
 import 'package:app_atex_gpt_exam/shared/constants.dart';
 import 'package:flutter/material.dart';
 
-var examMap = {}; // DEBUG
-
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   Home({super.key, required this.appUser});
 
   final AppUser appUser;
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+
+  late Future<AppUser?> _userDataFuture;
   final AuthService _auth = AuthService();
 
   @override
+  void initState() {
+    super.initState();
+    _userDataFuture = DatabaseService().fetchFullAppUser(widget.appUser.uid);
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      _userDataFuture = DatabaseService().fetchFullAppUser(widget.appUser.uid);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: DatabaseService().fetchFullAppUser(appUser.uid), 
-      builder: (context, snapshot) {
-        print("[home, build] conteúdo snapshot: ${snapshot.data}");
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        } else {
-          AppUser finalAppUser = snapshot.data!;
-          return TestingHome(appUser: finalAppUser);
-          //return ChatHome();
-        }
-      }
+    return RefreshIndicator(
+      onRefresh: _refreshData,
+      child: FutureBuilder(
+        future: _userDataFuture,
+        builder: (context, snapshot) {
+          print("[home, build] conteúdo snapshot: ${snapshot.data}");
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            AppUser finalAppUser = snapshot.data!;
+            return TestingHome(appUser: finalAppUser);
+            //return ChatHome();
+          }
+        },
+      ),
     );
   }
 }
