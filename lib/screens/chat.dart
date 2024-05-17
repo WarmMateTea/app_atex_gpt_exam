@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+String apiKey = dotenv.env['OPENAI_API_KEY']!;
 
 class ChatHome extends StatefulWidget {
   const ChatHome({super.key});
@@ -19,7 +22,7 @@ class _ChatHomeState extends State<ChatHome> {
     Uri chatUri = Uri.parse('https://api.openai.com/v1/chat/completions');
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer NULL',
+      'Authorization': 'Bearer $apiKey',
     };
     try {
       ChatRequest request = ChatRequest(model: "gpt-3.5-turbo", messages: [Message(role: "system", content: prompt)]);
@@ -74,7 +77,7 @@ class ChatService {
 
   static final Map<String, String> headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer NULL',
+    'Authorization': 'Bearer $apiKey',
   };
 
 }
