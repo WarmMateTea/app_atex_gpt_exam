@@ -22,6 +22,24 @@ class _SignInState extends State<SignIn> {
   String password = '';
   String error = '';
 
+  void _sendForm () async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        loading = true;
+        error = '';
+      });
+
+      dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+
+      if (result == null) {
+        setState(() {
+          loading = false;
+          error = 'Email ou senha inválidos 😢';
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +78,7 @@ class _SignInState extends State<SignIn> {
                 onChanged: (val) {
                   setState(() => password = val);
                 },
+                onFieldSubmitted: (value) => _sendForm(),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -70,23 +89,7 @@ class _SignInState extends State<SignIn> {
                   'Entrar',
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    setState(() {
-                      loading = true;
-                      error = '';
-                    });
-
-                    dynamic result = await _auth.signInWithEmailAndPassword(email, password);
-
-                    if (result == null) {
-                      setState(() {
-                        loading = false;
-                        error = 'Email ou senha inválidos 😢';
-                      });
-                    }
-                  }
-                }
+                onPressed: () => _sendForm(),
               ),
               const SizedBox(height:12),
               Text(error, style: const TextStyle(color: Colors.red, fontSize: 14),),

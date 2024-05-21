@@ -7,6 +7,7 @@ import 'package:app_atex_gpt_exam/models/exam.dart';
 import 'package:app_atex_gpt_exam/models/question.dart';
 import 'package:app_atex_gpt_exam/models/question_aggregator.dart';
 import 'package:app_atex_gpt_exam/screens/chat.dart';
+import 'package:app_atex_gpt_exam/screens/file_upload.dart';
 import 'package:app_atex_gpt_exam/services/auth.dart';
 import 'package:app_atex_gpt_exam/services/database.dart';
 import 'package:app_atex_gpt_exam/shared/constants.dart';
@@ -52,8 +53,9 @@ class _HomeState extends State<Home> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             AppUser finalAppUser = snapshot.data!;
-            return TestingHome(appUser: finalAppUser);
+            //return TestingHome(appUser: finalAppUser);
             //return ChatHome();
+            return FileUpload();
           }
         },
       ),
