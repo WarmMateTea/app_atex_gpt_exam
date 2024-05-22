@@ -79,7 +79,7 @@ class _UploadStepperState extends State<UploadStepper> {
     Exam? exam = Exam(
       date: examDate.text,
       name: examName.text,
-      uid: Utilities.generateExamUID(),
+      uid: widget.csvRecord!.generatedExamUID,
     );
 
     List<Future> futures = [];
