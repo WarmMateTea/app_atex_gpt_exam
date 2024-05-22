@@ -5,6 +5,7 @@ import 'package:app_atex_gpt_exam/models/question.dart';
 import 'package:app_atex_gpt_exam/models/question_aggregator.dart';
 import 'package:app_atex_gpt_exam/services/csv_reader_decoder.dart';
 import 'package:app_atex_gpt_exam/services/database.dart';
+import 'package:app_atex_gpt_exam/shared/isolate_manager.dart';
 import 'package:app_atex_gpt_exam/shared/utilities.dart';
 import 'package:flutter/material.dart';
 
@@ -105,6 +106,14 @@ class _UploadStepperState extends State<UploadStepper> {
       )
     );
 
+    IsolateManager().initializeIsolate();
+    for (Question q in widget.csvRecord!.questionAggregator.questions) {
+      for (Answer a in widget.csvRecord!.answerAggregatorList.firstWhere((aa) => aa.uid == q.answerAggregatorUID).answers) {
+        print("[file_to_data, submitData] Enviando: ${q.questionBody} | ${a.studentAnswer}");
+        IsolateManager().sendData((question: q, answer: a));
+      }
+    }
+    
     // TODO: aqui eu vou redirecionar o usuário pra uma home da vida, e criar um Isolate (eu acho) pra ficar interagindo com o gpt AKA enviando as mensagens, esperando a resposta, e guardando o resultado no BD ao longo dessas operações.
     /*Navigator.pushReplacement(
       context,
