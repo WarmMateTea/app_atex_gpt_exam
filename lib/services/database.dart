@@ -12,8 +12,25 @@ class DatabaseService {
   final String uid;
   DatabaseService({this.uid = ''});
 
-  // ! atualizar os models do fromJson como o chat fez
-  // ! nota: toJson não precisa ser implementado, dá pra fazer manualmente
+  // & + nova
+  /// Se supunheta que essa função recebe um QA todo fofo, apropriado, com o UID do seu Exam correspondente, com uma lista de Questions já bem estruturadinhas (ou vazia).
+  /// AVISO: se já existir um QA com o UID especificado, ele será SOBRESCRITO.
+  Future<void> addQA(QuestionAggregator qa) async {
+    var qa_collection = FirebaseFirestore.instance.collection('questionAggregatorCollection');
+    return await qa_collection.doc(qa.uid).set(qa.toJson());
+  } 
+
+  // & + nova
+  /// Essa função assume receber um AA apropriado, com o UID da sua Question associada, com uma lista de Answers bem-estruturadas (ou vazia).
+  /// AVISO: se já existir um QA com o UID especificado, ele será SOBRESCRITO.
+  Future<void> addAA(AnswerAggregator aa) async {
+    var aa_collection = FirebaseFirestore.instance.collection("answerAggregatorCollection");
+    return await aa_collection.doc(aa.uid).set(aa.toJson());
+  }
+
+  // ! TODO: refatorar os métodos de adicionar Question e Answer.
+  // ! motivo: como vc pode ter uma entrada de QA ou AA totalmente vazias (incluindo o UID), quando vc for adicionar um Question/Answer, caso o Aggregator correspondente "não exista" (AKA esteja vazio, AAKA UID vazia/nula), ele deverá ser criado apropriadamente. só então um UPDATE (no Aggregator) vai ter o efeito esperado. eu acho.
+  // ! existe uma chance boa (vou testar isso PRIMEIRO) de, como os Aggregators serem documentos muito simples (UID + lista), que um aggregator "vazio" nunca chegue - talvez ele chegue somente com um UID (e uma lista vazia vinda do fromJSON), o que significa que adicionar a Question/Answer nessa lista e meter um update talvez funcione.
 
   // ^ Atualizada
   Future<AppUser?> fetchFullAppUser(String userUID) async {
@@ -91,7 +108,8 @@ class DatabaseService {
       // Caso: não tenho question aggregator para aquele exam
       if (exam.questionAggregatorUID == null || exam.questionAggregatorUID!.isEmpty) {
         QuestionAggregator qa = QuestionAggregator(
-          uid: "${exam.uid}" , 
+          //uid: "${exam.uid}" , 
+          exam4uid: Exam(uid: examUID, name: "", date: ""),
           questions: [question],
         );
         // ! not working ?
@@ -129,7 +147,8 @@ class DatabaseService {
       // Caso: não tenho answer aggregator para aquela questão
       if (question.answerAggregatorUID == null || question.answerAggregatorUID!.isEmpty) {
         AnswerAggregator aa = AnswerAggregator(
-          uid: "${question.uid}" , 
+          //uid: "${question.uid}" , 
+          question4uid: Question(uid: questionUID, questionBody: ""),
           answers: [answer]
         );
 

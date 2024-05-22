@@ -3,7 +3,9 @@ class Exam {
   final String name;
   final String date;
 
-  Exam({required this.uid, required this.name, required this.date});
+  Exam({required this.uid, required this.name, required this.date}) {
+    questionAggregatorUID = uid;
+  }
 
   String? courseUID;
   String? subjectUID;

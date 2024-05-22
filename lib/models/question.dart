@@ -2,7 +2,9 @@
 class Question {
   final String uid;
 
-  Question({required this.uid, this.questionBody, this.gptAnswer, this.answerAggregatorUID});
+  Question({required this.uid, this.questionBody, this.gptAnswer}) {
+    answerAggregatorUID = uid;
+  }
 
   //Map? tags;
   String? questionBody;

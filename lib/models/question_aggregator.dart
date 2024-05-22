@@ -1,14 +1,18 @@
+import 'package:app_atex_gpt_exam/models/exam.dart';
 import 'package:app_atex_gpt_exam/models/question.dart';
 
 class QuestionAggregator {
-  final String uid;
+  late String uid;
   final List<Question> questions;
 
-  QuestionAggregator({required this.uid, required this.questions});
+  /// Recebe um Exam para puxar o UID dele (UID de um Exam e de um QuestionAggregator é o mesmo, sempre)
+  QuestionAggregator({required Exam exam4uid, required this.questions}) {
+    uid = exam4uid.uid;
+  }
 
   QuestionAggregator.fromJson(Map<String, dynamic> json)
-  : uid = json['uid'] as String,
-     questions = (json['questions'] as List<dynamic>).map((q) => Question.fromJson(q)).toList();
+  : uid = (json['uid'] ?? "") as String,
+     questions = ((json['questions'] ?? [] ) as List<dynamic>).map((q) => Question.fromJson(q)).toList();
 
   Map<String, dynamic> toJson() {
     return {

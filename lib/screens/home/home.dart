@@ -7,10 +7,12 @@ import 'package:app_atex_gpt_exam/models/exam.dart';
 import 'package:app_atex_gpt_exam/models/question.dart';
 import 'package:app_atex_gpt_exam/models/question_aggregator.dart';
 import 'package:app_atex_gpt_exam/screens/chat.dart';
+import 'package:app_atex_gpt_exam/screens/chat_interaction/file_to_data.dart';
 import 'package:app_atex_gpt_exam/screens/file_upload.dart';
 import 'package:app_atex_gpt_exam/services/auth.dart';
 import 'package:app_atex_gpt_exam/services/database.dart';
 import 'package:app_atex_gpt_exam/shared/constants.dart';
+import 'package:app_atex_gpt_exam/shared/utilities.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -55,7 +57,8 @@ class _HomeState extends State<Home> {
             AppUser finalAppUser = snapshot.data!;
             //return TestingHome(appUser: finalAppUser);
             //return ChatHome();
-            return FileUpload();
+            //return FileUpload();
+            return UploadExam(userUID: widget.appUser.uid);
           }
         },
       ),
@@ -348,7 +351,7 @@ class _ManualSingularRegisterFormState extends State<ManualSingularRegisterForm>
           Exam? exam = Exam(
             date: DateTime.now().toString(),
             name: examName.text,
-            uid: "${DateTime.now().toString()}${Random().nextInt(9999)}" // <- exam não tem UID verdadeiro então tô usando isso pra suprir a causa
+            uid: Utilities.generateExamUID(), // <- exam não tem UID verdadeiro então tô usando isso pra suprir a causa
           );
           print("this should be registered: ${exam.toString()}");
           exam = await DatabaseService().addExam(widget.appUser.uid, exam);
@@ -357,7 +360,7 @@ class _ManualSingularRegisterFormState extends State<ManualSingularRegisterForm>
           print("trying to register question");
           Question? question = Question(
             questionBody: questionBody.text,
-            uid: "${DateTime.now().toString()}${Random().nextInt(9999)}", // <- mesma ideia do exam aqui no uid da question
+            uid: Utilities.generateQuestionUID(), // <- mesma ideia do exam aqui no uid da question
           );
           print("this should be registered: ${question.toString()}");
           question = await DatabaseService().addQuestion(widget.appUser.uid, exam!.uid, question);
@@ -368,7 +371,7 @@ class _ManualSingularRegisterFormState extends State<ManualSingularRegisterForm>
             studentUID: studentName.text,
             questionUID: question!.uid,
             studentAnswer: studentAnswer.text,
-            uid: "${DateTime.now().toString()}${Random().nextInt(9999)}", // <- mesma ideia do exam e da question aqui no uid da answer
+            uid: Utilities.generateAnswerUID(), // <- mesma ideia do exam e da question aqui no uid da answer
           );
           print("this should be registered: ${answer.toString()}");
           answer = await DatabaseService().addAnswer(widget.appUser.uid, exam.uid, question.uid, answer);
