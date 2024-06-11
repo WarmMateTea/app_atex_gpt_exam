@@ -8,6 +8,8 @@ import 'package:app_atex_gpt_exam/services/database.dart';
 import 'package:app_atex_gpt_exam/shared/isolate_manager.dart';
 import 'package:app_atex_gpt_exam/shared/utilities.dart';
 import 'package:flutter/material.dart';
+import 'package:media_store_plus/media_store_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class UploadExam extends StatefulWidget {
   const UploadExam({super.key, required this.userUID});
@@ -22,6 +24,18 @@ class _UploadExamState extends State<UploadExam> {
   ({String generatedExamUID, QuestionAggregator questionAggregator, List<AnswerAggregator> answerAggregatorList})? csvRecord;
 
   void acquireCsvList() async {
+    //var status = await Permission.manageExternalStorage.request();
+    //  if (status.isDenied) {
+    //    print("storage perms denied");
+    //    // We haven't asked for permission yet or the permission has been denied before, but not permanently.
+    // //  }
+    // final mediaStorePlugin = MediaStore();
+    // List<Permission> permissions = [
+    //   Permission.storage,
+    // ];
+    // await permissions.request();
+    // print((await mediaStorePlugin.getFilePathFromUri(uriString: 'content://media/external_primary/images/media/1000000057')));
+
     var result = await CsvReaderDecoder().pickFile();  
 
     if (result != null) {
@@ -59,7 +73,7 @@ class _UploadExamState extends State<UploadExam> {
 
 // stepper
 class UploadStepper extends StatefulWidget {
-  UploadStepper({super.key, required this.userUID,required this.csvRecord});
+  UploadStepper({super.key, required this.userUID, required this.csvRecord});
   final String userUID;
 
   ({String generatedExamUID, QuestionAggregator questionAggregator, List<AnswerAggregator> answerAggregatorList})? csvRecord;
@@ -106,7 +120,7 @@ class _UploadStepperState extends State<UploadStepper> {
       )
     );
 
-    IsolateManager().initializeIsolate();
+    await IsolateManager().initializeIsolate();
     for (Question q in widget.csvRecord!.questionAggregator.questions) {
       for (Answer a in widget.csvRecord!.answerAggregatorList.firstWhere((aa) => aa.uid == q.answerAggregatorUID).answers) {
         print("[file_to_data, submitData] Enviando: ${q.questionBody} | ${a.studentAnswer}");

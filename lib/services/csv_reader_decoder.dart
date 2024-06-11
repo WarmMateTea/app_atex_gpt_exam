@@ -1,16 +1,24 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CsvReaderDecoder {
   Future<List<List<dynamic>>?> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['csv'],
+      withData: true,
     );
 
     if (result != null) {
       PlatformFile file = result.files.first;
+
+      // if (Platform.isAndroid) {
+      //} 
+      //else {
+      // }
 
       final fileBytes = file.bytes;
 

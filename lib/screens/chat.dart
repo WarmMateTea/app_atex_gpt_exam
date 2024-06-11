@@ -18,6 +18,7 @@ class _ChatHomeState extends State<ChatHome> {
   TextEditingController text = TextEditingController();
   TextEditingController response = TextEditingController();
 
+  // * esse é o q tá sendo usado
   Future<String?> request(String prompt) async {
     Uri chatUri = Uri.parse('https://api.openai.com/v1/chat/completions');
     Map<String, String> headers = {

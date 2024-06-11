@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:isolate';
 import 'package:app_atex_gpt_exam/services/database.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,7 +15,6 @@ import 'package:app_atex_gpt_exam/models/question.dart';
 /// A parte exposta da classe é o sendData, que recebe um Record ({Question question, Answer? answer}) e os envia para o isolate.
 class IsolateManager {
   static final IsolateManager _singleton = IsolateManager._internal();
-
   factory IsolateManager() {
     return _singleton;
   }
@@ -25,6 +26,8 @@ class IsolateManager {
   int _messageIdCounter = 0;
 
   Future<void> initializeIsolate() async {
+    final envContent = await rootBundle.loadString('.env');
+    await dotenv.load(fileName: ".env");  // TODO MANO WTF ESSE COISO N QUER FUNCIONAR
     final receivePort = ReceivePort();
     await Isolate.spawn(_isolateEntryPoint, receivePort.sendPort);
     final sendPort = await receivePort.first;
@@ -63,8 +66,10 @@ class IsolateManager {
           Resposta do estudante: ${data.answer?.studentAnswer}
           Sua avaliação:""";
 
-          var url = Uri.parse('https://api.openai.com/v1/davinci-codex/completions');
-          var apiKey = dotenv.env['OPENAI_API_KEY'];
+          
+          var url = Uri.parse('https://api.openai.com/v1/chat/completions');
+          //var apiKey = dotenv.env['OPENAI_API_KEY'];
+          var apiKey = SEGUINTE MANO VC PRECISA COLOCAR A CHAVE AQUI PQ O DOTENV N TA AFIM DE FUNCIONAR :D; // note que se vc tentar dar commit com a chave exposta o git explode e vc tera um problemão nas mãos :pray_emoji:
 
           print("[IsolateManager, _isolateEntryPoint, listening] sending http request for prompt: ${prompt}");
           var response = await http.post(
@@ -73,15 +78,19 @@ class IsolateManager {
               'Authorization': 'Bearer $apiKey',
               'Content-Type': 'application/json',
             },
-            body: {
-              'prompt': prompt,
-              'max_tokens': 350,
-            }
+            body: jsonEncode({
+              'model': 'gpt-3.5-turbo',
+              "messages": [{
+                "role": "user", "content": prompt
+              }]
+            }),
           );
 
-          print(response.body);
+          var decodedBody = jsonDecode(response.body);
+          print(decodedBody);
 
           // TODO: salvar no DB
+          var answer = decodedBody['choices'][0]['message']['content'];
           //DatabaseService().updateAnswer(data.answer!);
 
         } else {
