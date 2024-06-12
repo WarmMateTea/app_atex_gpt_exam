@@ -23,7 +23,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return StreamProvider<AppUser?>.value(
       value: AuthService().user,
       initialData: null,
