@@ -84,14 +84,6 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // TextFormField(
-                //   decoration: textInputDecoration.copyWith(labelText: 'Email'),
-                //   validator: ((value) =>
-                //       value!.isEmpty ? 'Insira um email' : null),
-                //   onChanged: (val) {
-                //     setState(() => email = val);
-                //   },
-                // ),
                 InputField(
                   controller: emailController,
                   labelText: "E-mail",
@@ -99,22 +91,10 @@ class _SignInState extends State<SignIn> {
                   validator: (value) =>
                       value != null && value.isEmpty ? 'Insira um email' : null,
                   onChanged: (val) {
-                    print('sla: $val');
                     setState(() => email = emailController.text);
                   },
                 ),
                 const SizedBox(height: 20),
-                // TextFormField(
-                //   decoration: textInputDecoration.copyWith(labelText: 'Senha'),
-                //   validator: ((value) => value!.length < 6
-                //       ? "Insira uma senha com pelo menos 6 caracteres"
-                //       : null),
-                //   obscureText: true,
-                //   onChanged: (val) {
-                //     setState(() => password = val);
-                //   },
-                //   onFieldSubmitted: (value) => _sendForm(),
-                // ),
                 InputField(
                   controller: passwordController,
                   labelText: "Senha",
@@ -123,28 +103,14 @@ class _SignInState extends State<SignIn> {
                       ? "Insira uma senha com pelo menos 6 caracteres"
                       : null,
                   onChanged: (val) {
-                    print('poha: $val');
                     setState(() => password = passwordController.text);
                   },
                 ),
                 const SizedBox(height: 20),
-                // ElevatedButton(
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor: Colors.blue[900],
-                //   ),
-                //   child: const Text(
-                //     'Entrar',
-                //     style: TextStyle(
-                //         color: Colors.white, fontWeight: FontWeight.bold),
-                //   ),
-                //   onPressed: () => _sendForm(),
-                // ),
                 Container(
                   width: double.infinity,
                   decoration: ShapeDecoration(
                     shape: const StadiumBorder(),
-                    // color: AppColors.defaultAppColor,
-                    // TODO: Com gradiente ou sem (?)
                     gradient: LinearGradient(
                       colors: [
                         Colors.blue.shade600,
