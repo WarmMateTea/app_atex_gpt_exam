@@ -21,13 +21,15 @@ class IsolateManager {
 
   IsolateManager._internal();
 
-  final _dataQueue = StreamController<({Question question, Answer? answer})>.broadcast();
+  final _dataQueue =
+      StreamController<({Question question, Answer? answer})>.broadcast();
   final _messageMap = <int, ({String questionUID, String? answerUID})>{};
   int _messageIdCounter = 0;
 
   Future<void> initializeIsolate() async {
     final envContent = await rootBundle.loadString('.env');
-    await dotenv.load(fileName: ".env");  // TODO MANO WTF ESSE COISO N QUER FUNCIONAR
+    await dotenv.load(
+        fileName: ".env"); // TODO MANO WTF ESSE COISO N QUER FUNCIONAR
     final receivePort = ReceivePort();
     await Isolate.spawn(_isolateEntryPoint, receivePort.sendPort);
     final sendPort = await receivePort.first;
@@ -36,18 +38,21 @@ class IsolateManager {
     _dataQueue.stream.listen((data) {
       print("[IsolateManager, listening] oh hey new data: ${data.toString()}");
       final id = _messageIdCounter++;
-      
-      _messageMap[id] = (questionUID: data.question.uid, answerUID: data.answer?.uid);
-      sendPort.send({'id': id, 'data': data});
 
-     });
-     print("[IsolateManager, initializeIsolate] done adding listener to _dataQueue}");
+      _messageMap[id] =
+          (questionUID: data.question.uid, answerUID: data.answer?.uid);
+      sendPort.send({'id': id, 'data': data});
+    });
+    print(
+        "[IsolateManager, initializeIsolate] done adding listener to _dataQueue}");
   }
 
   void sendData(({Question question, Answer? answer}) questionAnswerRecord) {
-    print("[IsolateManager, sendData] received new data: ${questionAnswerRecord.question.questionBody} | ${questionAnswerRecord.answer?.studentAnswer}");
+    print(
+        "[IsolateManager, sendData] received new data: ${questionAnswerRecord.question.questionBody} | ${questionAnswerRecord.answer?.studentAnswer}");
     _dataQueue.add(questionAnswerRecord);
-    print("[IsolateManager, sendData] does _dataQueue have a listener: ${_dataQueue.hasListener}");
+    print(
+        "[IsolateManager, sendData] does _dataQueue have a listener: ${_dataQueue.hasListener}");
   }
 
   static void _isolateEntryPoint(SendPort sendPort) {
@@ -55,23 +60,26 @@ class IsolateManager {
     sendPort.send(receivePort.sendPort);
 
     receivePort.listen((message) async {
-      print("[IsolateManager, _isolateEntryPoint, listening] received message: ${message.toString()}");
+      print(
+          "[IsolateManager, _isolateEntryPoint, listening] received message: ${message.toString()}");
       final id = message['id'];
       final data = message['data'];
 
       if (data is ({Question question, Answer? answer})) {
-        if (data.answer != null) {  // Interação com o chat
-          String prompt = """Você é um assistente de professor. Você receberá uma questão, e uma resposta de um estudante para essa questão. Avalie a resposta brevemente quanto à precisão e se ela contemplou tudo o que a questão pedia. Ao final, insira uma avaliação, indo de 0 a 100%, entre colchetes.
+        if (data.answer != null) {
+          // Interação com o chat
+          String prompt =
+              """Você é um assistente de professor. Você receberá uma questão, e uma resposta de um estudante para essa questão. Avalie a resposta brevemente quanto à precisão e se ela contemplou tudo o que a questão pedia. Ao final, insira uma avaliação, indo de 0 a 100%, entre colchetes.
           Questão: ${data.question.questionBody}
           Resposta do estudante: ${data.answer?.studentAnswer}
           Sua avaliação:""";
 
-          
           var url = Uri.parse('https://api.openai.com/v1/chat/completions');
-          //var apiKey = dotenv.env['OPENAI_API_KEY'];
-          var apiKey = SEGUINTE MANO VC PRECISA COLOCAR A CHAVE AQUI PQ O DOTENV N TA AFIM DE FUNCIONAR :D; // note que se vc tentar dar commit com a chave exposta o git explode e vc tera um problemão nas mãos :pray_emoji:
+          var apiKey = dotenv.env['OPEN_AI_KEY'];
+          // var apiKey = dotenv // note que se vc tentar dar commit com a chave exposta o git explode e vc tera um problemão nas mãos :pray_emoji:
 
-          print("[IsolateManager, _isolateEntryPoint, listening] sending http request for prompt: ${prompt}");
+          print(
+              "[IsolateManager, _isolateEntryPoint, listening] sending http request for prompt: ${prompt}");
           var response = await http.post(
             url,
             headers: {
@@ -80,9 +88,9 @@ class IsolateManager {
             },
             body: jsonEncode({
               'model': 'gpt-3.5-turbo',
-              "messages": [{
-                "role": "user", "content": prompt
-              }]
+              "messages": [
+                {"role": "user", "content": prompt}
+              ]
             }),
           );
 
@@ -92,7 +100,6 @@ class IsolateManager {
           // TODO: salvar no DB
           var answer = decodedBody['choices'][0]['message']['content'];
           //DatabaseService().updateAnswer(data.answer!);
-
         } else {
           // TODO:...rapaz
         }
