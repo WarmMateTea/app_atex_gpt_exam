@@ -120,9 +120,6 @@ class IsolateManager {
 
           var responseBody = utf8.decode(response.bodyBytes);
           var decodedBody = jsonDecode(responseBody);
-          //print(decodedBody);
-
-          // TODO: salvar no DB
           var answer = decodedBody['choices'][0]['message']['content'];
 
           data.answer?.correctionGPT = answer;

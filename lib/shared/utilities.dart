@@ -52,7 +52,7 @@ class Utilities {
             questionUID: currentQuestionUID, 
             uid: generateAnswerUID(),
             studentAnswer: data[j][i], 
-            studentUID: data[j][0]
+            studentUID: data[j][1]
             )
           );
       }
