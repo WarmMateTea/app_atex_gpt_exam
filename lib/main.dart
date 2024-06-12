@@ -1,6 +1,7 @@
 import 'package:app_atex_gpt_exam/models/appUser.dart';
 import 'package:app_atex_gpt_exam/screens/wrapper.dart';
 import 'package:app_atex_gpt_exam/services/auth.dart';
+import 'package:app_atex_gpt_exam/shared/isolate_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -13,6 +14,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load(fileName: ".env");
+  IsolateManager.setApiKeyGpt(key: dotenv.env['OPENAI_API_KEY']!);
   runApp(const MainApp());
 }
 
