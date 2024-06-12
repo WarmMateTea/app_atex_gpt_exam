@@ -12,6 +12,40 @@ class DatabaseService {
   final String uid;
   DatabaseService({this.uid = ''});
 
+  Future<void> updateAnswer(Answer answer, String answerAggregatorUID) async {
+    print("[DatabaseSerivice, updateAnswer] atualizando a resposta ${answer.toString()}");
+
+    DocumentReference aggregatorRef = FirebaseFirestore.instance
+      .collection('answerAggregatorCollection')
+      .doc(answerAggregatorUID);
+
+    // Transação para garantir a consistência dos dados
+    return FirebaseFirestore.instance.runTransaction((transaction) async {
+      // Recupera o documento AnswerAggregator
+      DocumentSnapshot snapshot = await transaction.get(aggregatorRef);
+
+      if (!snapshot.exists) {
+        throw Exception("AnswerAggregator não encontrado!");
+      }
+
+      // Extrai o array de answers
+      List<dynamic> answers = snapshot.get('answers');
+
+      // Encontra o índice do answer que precisa ser atualizado
+      int index = answers.indexWhere((a) => a['uid'] == answer.uid);
+
+      if (index == -1) {
+        throw Exception("Answer não encontrado no array!");
+      }
+
+      // Atualiza o answer no array
+      answers[index] = answer.toJson();
+
+      // Atualiza o documento no Firestore
+      transaction.update(aggregatorRef, {'answers': answers});
+    });
+  }
+
   // & + nova
   /// Se supunheta que essa função recebe um QA todo fofo, apropriado, com o UID do seu Exam correspondente, com uma lista de Questions já bem estruturadinhas (ou vazia).
   /// AVISO: se já existir um QA com o UID especificado, ele será SOBRESCRITO.
