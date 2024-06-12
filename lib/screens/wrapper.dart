@@ -15,7 +15,7 @@ class Wrapper extends StatelessWidget {
     print('^ from: Wrapper at ${DateTime.now()}');
 
     // dependendo da autenticação (se user == null, nenhum user logado) redirecionar para tela de autenticação ou home direto
-    AuthService().signOut();
+    // AuthService().signOut();
 
     if (user == null) {
       return const Authenticate();

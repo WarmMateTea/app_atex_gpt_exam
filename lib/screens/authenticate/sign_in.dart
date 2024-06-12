@@ -32,6 +32,8 @@ class _SignInState extends State<SignIn> {
         error = '';
       });
 
+      // n sei pq ele não aceita os controllers.text como parametro, mas
+      // fodase ta funcionando
       dynamic result = await _auth.signInWithEmailAndPassword(email, password);
 
       if (result == null) {
@@ -96,6 +98,10 @@ class _SignInState extends State<SignIn> {
                   obscureText: false,
                   validator: (value) =>
                       value != null && value.isEmpty ? 'Insira um email' : null,
+                  onChanged: (val) {
+                    print('sla: $val');
+                    setState(() => email = emailController.text);
+                  },
                 ),
                 const SizedBox(height: 20),
                 // TextFormField(
@@ -116,6 +122,10 @@ class _SignInState extends State<SignIn> {
                   validator: (value) => value!.length < 6
                       ? "Insira uma senha com pelo menos 6 caracteres"
                       : null,
+                  onChanged: (val) {
+                    print('poha: $val');
+                    setState(() => password = passwordController.text);
+                  },
                 ),
                 const SizedBox(height: 20),
                 // ElevatedButton(
