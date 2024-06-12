@@ -15,6 +15,9 @@ import 'package:app_atex_gpt_exam/models/question.dart';
 /// A parte exposta da classe é o sendData, que recebe um Record ({Question question, Answer? answer}) e os envia para o isolate.
 class IsolateManager {
   static final IsolateManager _singleton = IsolateManager._internal();
+
+  static String chatGptApiKey = "whatsapp";
+
   factory IsolateManager() {
     return _singleton;
   }
@@ -27,11 +30,11 @@ class IsolateManager {
   int _messageIdCounter = 0;
 
   Future<void> initializeIsolate() async {
-    final envContent = await rootBundle.loadString('.env');
-    await dotenv.load(
-        fileName: ".env"); // TODO MANO WTF ESSE COISO N QUER FUNCIONAR
     final receivePort = ReceivePort();
-    await Isolate.spawn(_isolateEntryPoint, receivePort.sendPort);
+    await Isolate.spawn(_isolateEntryPoint, {
+      'sendport': receivePort.sendPort,
+      'chatGptApiKey': chatGptApiKey,
+    });
     final sendPort = await receivePort.first;
 
     print("[IsolateManager, initializeIsolate] adding listener to _dataQueue}");
@@ -47,6 +50,10 @@ class IsolateManager {
         "[IsolateManager, initializeIsolate] done adding listener to _dataQueue}");
   }
 
+  static void setApiKeyGpt({required String key}) {
+    chatGptApiKey = key;
+  }
+
   void sendData(({Question question, Answer? answer}) questionAnswerRecord) {
     print(
         "[IsolateManager, sendData] received new data: ${questionAnswerRecord.question.questionBody} | ${questionAnswerRecord.answer?.studentAnswer}");
@@ -55,7 +62,10 @@ class IsolateManager {
         "[IsolateManager, sendData] does _dataQueue have a listener: ${_dataQueue.hasListener}");
   }
 
-  static void _isolateEntryPoint(SendPort sendPort) {
+  static void _isolateEntryPoint(dynamic initialData) {
+    final sendPort = initialData['sendport'];
+    final chatGptApiKey = initialData['chatGptApiKey'];
+
     final receivePort = ReceivePort();
     sendPort.send(receivePort.sendPort);
 
@@ -75,8 +85,8 @@ class IsolateManager {
           Sua avaliação:""";
 
           var url = Uri.parse('https://api.openai.com/v1/chat/completions');
-          var apiKey = dotenv.env['OPEN_AI_KEY'];
-          // var apiKey = dotenv // note que se vc tentar dar commit com a chave exposta o git explode e vc tera um problemão nas mãos :pray_emoji:
+
+          var apiKey = chatGptApiKey;
 
           print(
               "[IsolateManager, _isolateEntryPoint, listening] sending http request for prompt: ${prompt}");
