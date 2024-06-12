@@ -120,6 +120,7 @@ class _UploadStepperState extends State<UploadStepper> {
       )
     );
 
+    print("[file_to_data, submitData] calling initializeIsolate()");
     await IsolateManager().initializeIsolate();
     for (Question q in widget.csvRecord!.questionAggregator.questions) {
       for (Answer a in widget.csvRecord!.answerAggregatorList.firstWhere((aa) => aa.uid == q.answerAggregatorUID).answers) {

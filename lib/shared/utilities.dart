@@ -5,7 +5,7 @@ import 'package:app_atex_gpt_exam/models/exam.dart';
 import 'package:app_atex_gpt_exam/models/question.dart';
 import 'package:app_atex_gpt_exam/models/question_aggregator.dart';
 
-/// infinite sex
+/// infinite say gex
 class Utilities {
   static String generateExamUID() {
     return "${DateTime.now().toString()}_${Random().nextInt(999)}.${Random().nextInt(999)}.${Random().nextInt(999)}.${Random().nextInt(999)}";
@@ -84,4 +84,32 @@ class Utilities {
       answerAggregatorList: answerAggregatorList
     );
   }
+
+  static String extractRatingFromCorrection({required String input}) {
+  // Define a expressão regular para encontrar a substring entre colchetes.
+  RegExp regex = RegExp(r'\[(.*?)\]');
+  
+  // Tenta encontrar a substring que corresponda à expressão regular.
+  Match? match = regex.firstMatch(input);
+  
+  // Variável para armazenar o resultado.
+  String resultado = '0%';
+  
+  // Se encontrar um match, extrai a substring.
+  if (match != null) {
+    // Extrai a substring.
+    String? substring = match.group(1);
+    
+    // Verifica se a substring é válida.
+    if (substring != null) {
+      // Remove a palavra "Avaliação: " se estiver presente.
+      substring = substring.replaceAll('Avaliação: ', '');
+      
+      // Define o resultado como a substring extraída.
+      resultado = substring;
+    }
+  }
+  
+  return resultado;
+}
 }
