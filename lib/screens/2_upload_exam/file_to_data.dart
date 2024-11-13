@@ -1,24 +1,21 @@
 import 'package:app_atex_gpt_exam/models/answer.dart';
 import 'package:app_atex_gpt_exam/models/answer_aggregator.dart';
+import 'package:app_atex_gpt_exam/models/appUser.dart';
 import 'package:app_atex_gpt_exam/models/exam.dart';
 import 'package:app_atex_gpt_exam/models/question.dart';
 import 'package:app_atex_gpt_exam/models/question_aggregator.dart';
-import 'package:app_atex_gpt_exam/services/auth.dart';
 import 'package:app_atex_gpt_exam/services/csv_reader_decoder.dart';
 import 'package:app_atex_gpt_exam/services/database.dart';
 import 'package:app_atex_gpt_exam/shared/isolate_manager.dart';
 import 'package:app_atex_gpt_exam/shared/utilities.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:media_store_plus/media_store_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:app_atex_gpt_exam/screens/widgets/input_field.dart';
+import 'package:app_atex_gpt_exam/widgets/input_field.dart';
 
 class UploadExam extends StatefulWidget {
-  const UploadExam({super.key, required this.userUID});
+  const UploadExam({super.key, required this.userUID, required this.user});
   final String userUID;
+  final AppUser user;
 
   @override
   State<UploadExam> createState() => _UploadExamState();
@@ -52,13 +49,13 @@ class _UploadExamState extends State<UploadExam> {
           title: const Text('Deseja sair de sua conta?'),
           content: const Text('Você precisará fazer Login novamente.'),
           actions: <Widget>[
-            TextButton(
+            FilledButton(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
               child: const Text('Não'),
             ),
-            TextButton(
+            FilledButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
@@ -72,91 +69,40 @@ class _UploadExamState extends State<UploadExam> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.blue[800],
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              onPressed: () {
-                print('?');
-              },
-              icon: const Icon(
-                Icons.add_circle_outline,
-                color: Colors.white,
-                size: 40,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child:
+                UploadStepper(userUID: widget.userUID, csvRecord: csvRecord),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(40.0, 20, 40.0, 0),
+            child: Container(
+              width: double.infinity,
+              decoration: const ShapeDecoration(
+                shape: StadiumBorder(),
               ),
-            ),
-            IconButton(
-              onPressed: () {
-                print('Home');
-              },
-              icon: const Icon(
-                Icons.home,
-                color: Colors.white,
-                size: 40,
-              ),
-            ),
-            IconButton(
-              onPressed: () async {
-                bool? shouldSignOut = await showConfirmationDialog(context);
-                if (shouldSignOut == true) {
-                  AuthService().signOut();
-                }
-              },
-              icon: const Icon(
-                Icons.exit_to_app,
-                color: Colors.white,
-                size: 40,
-              ),
-            ),
-          ],
-        ),
-      ),
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child:
-                  UploadStepper(userUID: widget.userUID, csvRecord: csvRecord),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(40.0, 20, 40.0, 0),
-              child: Container(
-                width: double.infinity,
-                decoration: ShapeDecoration(
-                  shape: const StadiumBorder(),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.blue.shade600,
-                      Colors.blue.shade900,
-                    ],
-                  ),
+              child: FilledButton(
+                style: const ButtonStyle(
+                  splashFactory: NoSplash.splashFactory,
                 ),
-                child: TextButton(
-                  style: const ButtonStyle(
-                    splashFactory: NoSplash.splashFactory,
-                  ),
-                  onPressed: () {
-                    acquireCsvList();
-                  },
-                  child: const Text(
-                    "Escolher arquivo",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
+                onPressed: () {
+                  acquireCsvList();
+                },
+                child: const Text(
+                  "Escolher arquivo",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -204,9 +150,8 @@ class _UploadStepperState extends State<UploadStepper> {
       context: context,
       builder: (context) => const AlertDialog(
         icon: Icon(Icons.warning),
-        iconColor: Colors.blueAccent,
         title: Text("Seu arquivo foi salvo!"),
-        content: Text("Na próxima versão, conversaremos com o GPT!"),
+        //content: Text("Na próxima versão, conversaremos com o GPT!"),
       ),
     );
 
@@ -234,15 +179,10 @@ class _UploadStepperState extends State<UploadStepper> {
     if (widget.csvRecord != null) {
       return Container(
         height: 450,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.white24),
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-          color: Colors.black,
-        ),
         child: Stepper(
           currentStep: _currentStep,
-          connectorColor: MaterialStateProperty.resolveWith<Color>((states) {
-            if (states.contains(MaterialState.selected)) {
+          connectorColor: WidgetStateProperty.resolveWith<Color>((states) {
+            if (states.contains(WidgetState.selected)) {
               return Colors.blue;
             } else {
               return Colors.grey;
@@ -277,12 +217,8 @@ class _UploadStepperState extends State<UploadStepper> {
               child: Row(
                 children: <Widget>[
                   Expanded(
-                    child: TextButton(
+                    child: ElevatedButton(
                       onPressed: details.onStepCancel,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[700],
-                        foregroundColor: Colors.white,
-                      ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -294,12 +230,8 @@ class _UploadStepperState extends State<UploadStepper> {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: ElevatedButton(
+                    child: FilledButton(
                       onPressed: details.onStepContinue,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[700],
-                        foregroundColor: Colors.white,
-                      ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -372,7 +304,12 @@ class _UploadStepperState extends State<UploadStepper> {
         ),
       );
     } else {
-      return const Placeholder();
+      return const SizedBox(
+        child:  Icon(
+          Icons.file_upload_outlined, 
+          size: 180,
+        ),
+      );
     }
   }
 }
@@ -390,7 +327,6 @@ class QuestionDataWidgetCompact extends StatelessWidget {
       children: [
         Text(
           "${question.questionBody}",
-          style: TextStyle(color: Colors.blue.shade700),
         ),
         const SizedBox(height: 10),
         Container(
@@ -400,7 +336,6 @@ class QuestionDataWidgetCompact extends StatelessWidget {
               for (Answer a in aa.answers)
                 Text(
                   "Student: ${a.studentUID} \n${a.studentAnswer}",
-                  style: const TextStyle(color: Colors.white),
                 ),
             ],
           ),

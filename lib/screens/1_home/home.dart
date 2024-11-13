@@ -1,15 +1,14 @@
-import 'dart:math';
-
 import 'package:app_atex_gpt_exam/models/answer.dart';
 import 'package:app_atex_gpt_exam/models/answer_aggregator.dart';
 import 'package:app_atex_gpt_exam/models/appUser.dart';
 import 'package:app_atex_gpt_exam/models/exam.dart';
 import 'package:app_atex_gpt_exam/models/question.dart';
 import 'package:app_atex_gpt_exam/models/question_aggregator.dart';
-import 'package:app_atex_gpt_exam/screens/chat.dart';
-import 'package:app_atex_gpt_exam/screens/chat_interaction/file_to_data.dart';
-import 'package:app_atex_gpt_exam/screens/file_upload.dart';
-import 'package:app_atex_gpt_exam/screens/home/explorer.dart';
+import 'package:app_atex_gpt_exam/screens/4_create_question/create_question_page.dart';
+import 'package:app_atex_gpt_exam/screens/3_explore_questions/explorer.dart';
+import 'package:app_atex_gpt_exam/screens/2_upload_exam/file_to_data.dart';
+import 'package:app_atex_gpt_exam/screens/5_config/config_page.dart';
+import 'package:app_atex_gpt_exam/widgets/change_ai_fab.dart';
 import 'package:app_atex_gpt_exam/services/auth.dart';
 import 'package:app_atex_gpt_exam/services/database.dart';
 import 'package:app_atex_gpt_exam/shared/constants.dart';
@@ -17,7 +16,7 @@ import 'package:app_atex_gpt_exam/shared/utilities.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
-  Home({super.key, required this.appUser});
+  const Home({super.key, required this.appUser});
 
   final AppUser appUser;
 
@@ -29,6 +28,7 @@ class _HomeState extends State<Home> {
 
   late Future<AppUser?> _userDataFuture;
   final AuthService _auth = AuthService();
+  int currentPageIndex = 0;
 
   @override
   void initState() {
@@ -44,6 +44,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     return RefreshIndicator(
       onRefresh: _refreshData,
       child: FutureBuilder(
@@ -56,11 +57,68 @@ class _HomeState extends State<Home> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             AppUser finalAppUser = snapshot.data!;
-            //return TestingHome(appUser: finalAppUser);
-            //return ChatHome();
-            //return FileUpload();
-            //return UploadExam(userUID: widget.appUser.uid);
-            return ExplorerBase(userCompleto: snapshot.data!);
+            //return UploadExam(userUID: widget.appUser.uid, user:snapshot.data!);
+
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              floatingActionButton: const ChangeAiFab(),
+              bottomNavigationBar: NavigationBar(
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    currentPageIndex = index;
+                  });
+                },
+                selectedIndex: currentPageIndex,
+                destinations: const [
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.home), 
+                    icon: Icon(Icons.home_outlined), 
+                    label: 'Home'
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.add), 
+                    icon: Icon(Icons.add_outlined), 
+                    label: 'Upload'
+                  ),
+                  NavigationDestination( 
+                    icon: Icon(Icons.addchart), 
+                    label: 'Provas'
+                  ),
+                  NavigationDestination( 
+                    icon: Icon(Icons.edit_document), 
+                    label: 'Criar Questão'
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.settings), 
+                    icon: Icon(Icons.settings_outlined), 
+                    label: 'Config'
+                  ),
+                ],
+              ),
+
+              body: [
+                // home
+                Card(
+                  margin: const EdgeInsets.all(8),
+                  child: SizedBox.expand(
+                    child: Center(
+                      child: Text(
+                        "Home Page :D",
+                        style: theme.textTheme.titleLarge
+                      ),
+                    ),
+                  )
+                ),
+                // upload
+                UploadExam(userUID: finalAppUser.uid, user: finalAppUser),
+                // provas
+                ExplorerBase(userCompleto: finalAppUser),
+                // criar questão
+                CreateQuestionPage(user: finalAppUser),
+                // config (temas e logout)
+                ConfigPage(user: finalAppUser)
+              ][currentPageIndex]
+            );
           }
         },
       ),
@@ -80,7 +138,7 @@ class _TestingHomeState extends State<TestingHome> {
   @override
   Widget build(BuildContext context) {
 
-    void _showRegisterPanel() {
+    void showRegisterPanel() {
       showModalBottomSheet(
         context: context,
         builder: (context) => Container(
@@ -98,7 +156,7 @@ class _TestingHomeState extends State<TestingHome> {
           ElevatedButton.icon(
             onPressed: () {
               setState(() {
-                _showRegisterPanel();
+                showRegisterPanel();
               });
             },
             icon: const Icon(Icons.add),
@@ -166,7 +224,7 @@ class ExamDataWidget extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         TextFormField(
-          decoration: textInputDecoration.copyWith(hintText: 'Queston Aggregator UID'),
+          decoration: textInputDecoration.copyWith(hintText: 'Question Aggregator UID'),
           initialValue: exam.questionAggregatorUID,
         ),
         QuestionAggregatorWidget(questionAggregatorUID: exam.questionAggregatorUID ?? ""),
@@ -264,7 +322,7 @@ class AnswerDataWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    print("Answer shown:\n" + answer.toString());
+    print("Answer shown:\n$answer");
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

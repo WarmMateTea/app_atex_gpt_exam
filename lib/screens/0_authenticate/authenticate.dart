@@ -1,5 +1,5 @@
-import 'package:app_atex_gpt_exam/screens/authenticate/register.dart';
-import 'package:app_atex_gpt_exam/screens/authenticate/sign_in.dart';
+import 'package:app_atex_gpt_exam/screens/0_authenticate/register.dart';
+import 'package:app_atex_gpt_exam/screens/0_authenticate/sign_in.dart';
 import 'package:flutter/material.dart';
 
 class Authenticate extends StatefulWidget {

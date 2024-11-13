@@ -1,6 +1,5 @@
-import 'package:app_atex_gpt_exam/screens/widgets/input_field.dart';
+import 'package:app_atex_gpt_exam/widgets/input_field.dart';
 import 'package:app_atex_gpt_exam/services/auth.dart';
-import 'package:app_atex_gpt_exam/shared/constants.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
@@ -48,20 +47,7 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       resizeToAvoidBottomInset: false,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.blue[900],
-      //   elevation: 0,
-      //   title: const Text('Entrar no GPT Exam (nome sujeito a mudanças)'),
-      //   actions: [
-      //     TextButton.icon(
-      //       icon: const Icon(Icons.person),
-      //       label: const Text('Cadastrar'),
-      //       onPressed: () => widget.toggleView(),
-      //     ),
-      //   ],
-      // ),
       body: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
@@ -73,13 +59,11 @@ class _SignInState extends State<SignIn> {
                 // logo ficticia =)
                 Icon(
                   Icons.run_circle_outlined,
-                  color: Colors.blue.shade600,
                   size: 120,
                 ),
                 const Text(
                   "GPTExam",
                   style: TextStyle(
-                    color: Colors.white,
                     fontSize: 30,
                   ),
                 ),
@@ -109,16 +93,10 @@ class _SignInState extends State<SignIn> {
                 const SizedBox(height: 20),
                 Container(
                   width: double.infinity,
-                  decoration: ShapeDecoration(
-                    shape: const StadiumBorder(),
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.blue.shade600,
-                        Colors.blue.shade900,
-                      ],
-                    ),
+                  decoration: const ShapeDecoration(
+                    shape: StadiumBorder(),
                   ),
-                  child: TextButton(
+                  child: FilledButton(
                     style: const ButtonStyle(
                       splashFactory: NoSplash.splashFactory,
                     ),
@@ -128,7 +106,6 @@ class _SignInState extends State<SignIn> {
                     child: const Text(
                       "Entrar",
                       style: TextStyle(
-                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 20),
                     ),
@@ -139,10 +116,9 @@ class _SignInState extends State<SignIn> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     const Text(
-                      "Não tem uma conta?",
-                      style: TextStyle(color: Colors.white70),
+                      "Não tem uma conta?"
                     ),
-                    TextButton(
+                    FilledButton(
                       onPressed: () {
                         widget.toggleView();
                       },
@@ -152,10 +128,7 @@ class _SignInState extends State<SignIn> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "Cadastre-se",
-                          style: TextStyle(
-                            color: Colors.blue.shade600,
-                          ),
+                          "Cadastre-se"
                         ),
                       ),
                     ),

@@ -3,25 +3,45 @@ import 'package:app_atex_gpt_exam/models/answer_aggregator.dart';
 import 'package:app_atex_gpt_exam/models/appUser.dart';
 import 'package:app_atex_gpt_exam/models/question.dart';
 import 'package:app_atex_gpt_exam/models/question_aggregator.dart';
+import 'package:app_atex_gpt_exam/widgets/change_ai_fab.dart';
 import 'package:app_atex_gpt_exam/services/database.dart';
 import 'package:app_atex_gpt_exam/shared/ai_sync_request.dart';
+import 'package:app_atex_gpt_exam/shared/constants.dart';
 import 'package:flutter/material.dart';
 
-class ExplorerBase extends StatelessWidget {
-  const ExplorerBase({super.key, required this.userCompleto});
-  final AppUser userCompleto;
+class ExplorerBase extends StatefulWidget {
+  ExplorerBase({super.key, required this.userCompleto});
+  
+  AppUser userCompleto;
+
+  @override
+  State<ExplorerBase> createState() => _ExplorerBaseState();
+}
+
+class _ExplorerBaseState extends State<ExplorerBase> {
+  @override void initState() {
+    super.initState();
+    updateUser();
+  }
+
+  void updateUser() async {
+    widget.userCompleto = await DatabaseService().fetchFullAppUser(widget.userCompleto.uid) ?? widget.userCompleto;
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    print("[ExplorerBase, build] " + userCompleto.toString());
+    
+    print("[ExplorerBase, build] ${widget.userCompleto}");
     return NestedScrollView(
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return [
           SliverAppBar(
-          title: Text(
+          title: const Text(
             'Provas',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),),
-          backgroundColor: Colors.blue[700],
+            style: TextStyle( 
+              fontWeight: FontWeight.w600),
+            ),
           centerTitle: true,
           floating: true,
           snap: true,
@@ -30,18 +50,18 @@ class ExplorerBase extends StatelessWidget {
         ];
       },
       body: ListView.builder(
-        itemCount: userCompleto.exams.length,
+        itemCount: widget.userCompleto.exams.length,
         itemBuilder: (context, index) {
           return Card(
             child: ListTile(
-              title: Text(userCompleto.exams[index].name),
+              title: Text(widget.userCompleto.exams[index].name),
               onTap: () async {
-                QuestionAggregator? qa = await DatabaseService().fetchQuestionAggregator(userCompleto.exams[index].questionAggregatorUID!);
+                QuestionAggregator? qa = await DatabaseService().fetchQuestionAggregator(widget.userCompleto.exams[index].questionAggregatorUID!);
                 
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ExplorerQuestions(user: userCompleto, questions: qa!.questions),
+                    builder: (context) => ExplorerQuestions(user: widget.userCompleto, questions: qa!.questions),
                   ),
                 );
               },
@@ -52,6 +72,8 @@ class ExplorerBase extends StatelessWidget {
     );
   }
 }
+
+
 
 class ExplorerQuestions extends StatelessWidget {
   const ExplorerQuestions({super.key, required this.user, required this.questions});
@@ -65,10 +87,11 @@ class ExplorerQuestions extends StatelessWidget {
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return [
           SliverAppBar(
-          title: Text(
+          title: const Text(
             'Questões',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),),
-          backgroundColor: Colors.blue[700],
+            style: TextStyle(
+              fontWeight: FontWeight.w600),
+            ),
           centerTitle: true,
           floating: true,
           snap: true,
@@ -112,10 +135,11 @@ class ExplorerAnswers extends StatelessWidget {
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return [
           SliverAppBar(
-          title: Text(
+          title: const Text(
             'Respostas',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),),
-          backgroundColor: Colors.blue[700],
+            style: TextStyle(
+              fontWeight: FontWeight.w600),
+            ),
           centerTitle: true,
           floating: true,
           snap: true,
@@ -184,18 +208,24 @@ class _AnswerCardState extends State<AnswerCard> {
             const SizedBox(height:4),
             Text(
               "Avaliação: ${widget.answer.rating}",
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(
+                fontSize: 16
+              ),
             ),
             if (isExpanded) ...[
               const SizedBox(height:8),
               Text(
                 "Resposta do estudante: ${widget.answer.studentAnswer}",
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                style: TextStyle(
+                  fontSize: 14, 
+                ),
               ),
               const SizedBox(height:8),
               Text(
                 "Correção da IA: ${widget.answer.correctionGPT}",
-                style: TextStyle(fontSize: 12, color: Colors.grey[900]),
+                style: TextStyle(
+                  fontSize: 12,
+                ),
               ),
               const SizedBox(height: 16),
               Align(

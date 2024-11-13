@@ -50,16 +50,16 @@ class DatabaseService {
   /// Se supunheta que essa função recebe um QA todo fofo, apropriado, com o UID do seu Exam correspondente, com uma lista de Questions já bem estruturadinhas (ou vazia).
   /// AVISO: se já existir um QA com o UID especificado, ele será SOBRESCRITO.
   Future<void> addQA(QuestionAggregator qa) async {
-    var qa_collection = FirebaseFirestore.instance.collection('questionAggregatorCollection');
-    return await qa_collection.doc(qa.uid).set(qa.toJson());
+    var qaCollection = FirebaseFirestore.instance.collection('questionAggregatorCollection');
+    return await qaCollection.doc(qa.uid).set(qa.toJson());
   } 
 
   // & + nova
   /// Essa função assume receber um AA apropriado, com o UID da sua Question associada, com uma lista de Answers bem-estruturadas (ou vazia).
   /// AVISO: se já existir um QA com o UID especificado, ele será SOBRESCRITO.
   Future<void> addAA(AnswerAggregator aa) async {
-    var aa_collection = FirebaseFirestore.instance.collection("answerAggregatorCollection");
-    return await aa_collection.doc(aa.uid).set(aa.toJson());
+    var aaCollection = FirebaseFirestore.instance.collection("answerAggregatorCollection");
+    return await aaCollection.doc(aa.uid).set(aa.toJson());
   }
 
   // ! TODO: refatorar os métodos de adicionar Question e Answer.
@@ -68,10 +68,10 @@ class DatabaseService {
 
   // ^ Atualizada
   Future<AppUser?> fetchFullAppUser(String userUID) async {
-    print("[database, fetchFullAppUser] DatabaseService: Tentando fetchFullAppUser para o userUID ${userUID}");
+    print("[database, fetchFullAppUser] DatabaseService: Tentando fetchFullAppUser para o userUID $userUID");
     var collection = FirebaseFirestore.instance.collection('appUserCollection');
     var userDoc = await collection.doc(userUID).get();
-    print("[database, fetchFullAppUser] UserDoc retornado pela firebase: ${userDoc}");
+    print("[database, fetchFullAppUser] UserDoc retornado pela firebase: $userDoc");
     if (userDoc.exists) {
       print("[database, fetchFullAppUser] Conteúdo do Json recebido: ${userDoc.data()!}");
       AppUser user = AppUser.fromJson(userDoc.data() ?? {});
@@ -120,7 +120,7 @@ class DatabaseService {
       collection.doc(userUID).update(appUser.toJson());
       return exam;
     } else {
-      print("wtf addExam in database.dart couldn't find an app user of UID ${userUID}");
+      print("wtf addExam in database.dart couldn't find an app user of UID $userUID");
       return null;
     }
   }
@@ -163,7 +163,7 @@ class DatabaseService {
         return question;
       }
     } else {
-      print("wtf addQuestion in database.dart couldn't find an app user of UID ${userUID}");
+      print("wtf addQuestion in database.dart couldn't find an app user of UID $userUID");
       return null;
     }
   }
@@ -203,7 +203,7 @@ class DatabaseService {
         return answer;
       }
     } else {
-      print("wtf addAnswer in database.dart couldn't find a question aggregator of UID ${examUID}");
+      print("wtf addAnswer in database.dart couldn't find a question aggregator of UID $examUID");
       return null;
     }
   }
@@ -288,10 +288,10 @@ class DatabaseService {
   Future updateUserData(String uid, String email, String nome, List<Exam>? exams) async {
     var collection = FirebaseFirestore.instance.collection('appUserCollection');
     print("DatabaseService tentando cadastrar o usuário:");
-    print("UID: ${uid}");
-    print("email: ${email}");
-    print("nome: ${nome}");
-    print("exams: ${exams}");
+    print("UID: $uid");
+    print("email: $email");
+    print("nome: $nome");
+    print("exams: $exams");
     return await collection.doc(uid).set({
       'uid': uid,
       'email': email,

@@ -23,26 +23,14 @@ class InputField extends StatelessWidget {
       obscureText: obscureText,
       validator: validator,
       onChanged: onChanged,
-      style: const TextStyle(
-        color: Colors.white70,
-        fontSize: 16,
-      ),
       decoration: InputDecoration(
         labelText: labelText,
-        errorStyle: const TextStyle(
-          color: Colors.red, // Customize the error message color
-          fontSize: 12, // Adjust font size if needed
-        ),
-        labelStyle: const TextStyle(
-          color: Colors.white70,
-        ),
         contentPadding: const EdgeInsets.all(10),
         enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(10.0),
           ),
           borderSide: BorderSide(
-            color: Colors.white54,
           ),
         ),
         focusedBorder: const OutlineInputBorder(
@@ -50,7 +38,6 @@ class InputField extends StatelessWidget {
             Radius.circular(10.0),
           ),
           borderSide: BorderSide(
-            color: Colors.white70,
             width: 2,
           ),
         ),
@@ -59,7 +46,6 @@ class InputField extends StatelessWidget {
             Radius.circular(10.0),
           ),
           borderSide: BorderSide(
-            color: Colors.red,
             width: 2,
           ),
         ),
@@ -68,7 +54,6 @@ class InputField extends StatelessWidget {
             Radius.circular(10.0),
           ),
           borderSide: BorderSide(
-            color: Colors.red,
             width: 2,
           ),
         ),

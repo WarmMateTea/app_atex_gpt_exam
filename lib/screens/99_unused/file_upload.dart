@@ -1,10 +1,7 @@
-import 'dart:io';
 
 import 'package:app_atex_gpt_exam/services/csv_reader_decoder.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:csv/csv.dart';
-import 'dart:convert' show utf8;
 
 class FileUpload extends StatefulWidget {
   const FileUpload({super.key});

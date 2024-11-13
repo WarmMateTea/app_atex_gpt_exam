@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'dart:isolate';
 import 'package:app_atex_gpt_exam/services/database.dart';
 import 'package:app_atex_gpt_exam/shared/utilities.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:app_atex_gpt_exam/models/answer.dart';
@@ -31,15 +29,24 @@ class IsolateManager {
   int _messageIdCounter = 0;
 
   final receivePort = ReceivePort();
+  dynamic sendPortStored;
+  bool firstTime = false;
 
   Future<void> initializeIsolate() async {
     await Isolate.spawn(_isolateEntryPoint, {
       'sendport': receivePort.sendPort,
       'chatGptApiKey': chatGptApiKey,
-    });
+    }); 
 
     final receivePortBroadcast = receivePort.asBroadcastStream();
-    final sendPort = await receivePortBroadcast.first;
+    var sendPort;
+    if (sendPortStored == null) {
+      sendPort = await receivePortBroadcast.first;
+      sendPortStored = sendPort;
+    } else {
+      sendPort = sendPortStored;
+    }
+     // fix it by setting the value to a static field
 
     _dataQueue.stream.listen((data) {
       print(
@@ -51,7 +58,8 @@ class IsolateManager {
       sendPort.send({'id': id, 'data': data});
     });
 
-    receivePortBroadcast.listen((message) {
+    if (firstTime == false) {
+      receivePortBroadcast.listen((message) {
       //final id = message['id'];
       final Map<String, dynamic> data = message['data'];
 
@@ -60,7 +68,10 @@ class IsolateManager {
 
       DatabaseService().updateAnswer(answer, aaUID);
       print("[IsolateManager, listening to ResultStream] done updating");
+      firstTime = true;
     });
+    }
+    
   }
 
   static void setApiKeyGpt({required String key}) {
@@ -90,6 +101,8 @@ class IsolateManager {
 
       if (data is ({Question question, Answer? answer})) {
         if (data.answer != null) {
+
+          //TODO aqui é onde eu vou modularizar. Além disso, colocar um easy isolate aqui seria legal.
           // Interação com o chat
           String prompt =
               """Você é um assistente de professor. Você receberá uma questão, e uma resposta de um estudante para essa questão. Avalie a resposta brevemente quanto à precisão e se ela contemplou tudo o que a questão pedia. Ao final, insira uma avaliação, indo de 0 a 100%, entre colchetes, assim: [X%], onde X é a avaliação.
@@ -102,7 +115,7 @@ class IsolateManager {
           var apiKey = chatGptApiKey;
 
           print(
-              "[IsolateManager, _isolateEntryPoint, listening] sending http request for prompt: ${prompt}");
+              "[IsolateManager, _isolateEntryPoint, listening] sending http request for prompt: $prompt");
 
           var response = await http.post(
             url,

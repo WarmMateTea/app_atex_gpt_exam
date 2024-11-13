@@ -1,6 +1,5 @@
 import 'package:app_atex_gpt_exam/services/auth.dart';
-import 'package:app_atex_gpt_exam/shared/constants.dart';
-import 'package:app_atex_gpt_exam/screens/widgets/input_field.dart';
+import 'package:app_atex_gpt_exam/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
@@ -31,7 +30,7 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      //backgroundColor: Colors.black,
       // appBar: AppBar(
       //   backgroundColor: Colors.blue[900],
       //   elevation: 0,
@@ -54,13 +53,13 @@ class _RegisterState extends State<Register> {
               children: [
                 Icon(
                   Icons.run_circle_outlined,
-                  color: Colors.blue.shade600,
+                  //color: Colors.blue.shade600,
                   size: 120,
                 ),
                 const Text(
                   "GPTExam",
                   style: TextStyle(
-                    color: Colors.white,
+                    //color: Colors.white,
                     fontSize: 30,
                   ),
                 ),
@@ -102,16 +101,10 @@ class _RegisterState extends State<Register> {
                 const SizedBox(height: 20),
                 Container(
                   width: double.infinity,
-                  decoration: ShapeDecoration(
-                    shape: const StadiumBorder(),
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.blue.shade600,
-                        Colors.blue.shade900,
-                      ],
-                    ),
+                  decoration: const ShapeDecoration(
+                    shape: StadiumBorder(),
                   ),
-                  child: TextButton(
+                  child: FilledButton(
                     style: const ButtonStyle(
                       splashFactory: NoSplash.splashFactory,
                     ),
@@ -138,9 +131,10 @@ class _RegisterState extends State<Register> {
                     child: const Text(
                       "Cadastrar",
                       style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
+                        //color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20
+                      ),  
                     ),
                   ),
                 ),
@@ -150,9 +144,9 @@ class _RegisterState extends State<Register> {
                   children: <Widget>[
                     const Text(
                       "Já possuí uma conta?",
-                      style: TextStyle(color: Colors.white70),
+                      //style: TextStyle(color: Colors.white70),
                     ),
-                    TextButton(
+                    FilledButton(
                       onPressed: () {
                         widget.toggleView();
                       },
@@ -164,7 +158,7 @@ class _RegisterState extends State<Register> {
                         child: Text(
                           "Faça o Login",
                           style: TextStyle(
-                            color: Colors.blue.shade600,
+                            //color: Colors.blue.shade600,
                           ),
                         ),
                       ),

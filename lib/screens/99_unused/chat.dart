@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:dart_openai/dart_openai.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -51,19 +50,19 @@ class _ChatHomeState extends State<ChatHome> {
     return Scaffold(
       body: Center(child: Column(
         children: [
-          Text("Chat Home"),
+          const Text("Chat Home"),
           TextFormField(
             controller: text,
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () async {
               response.text = await request(text.text) ?? "";
               print(text.text);
               setState(() {});
             }, 
-          child: Text("Enviar")),
-          SizedBox(height: 20),
+          child: const Text("Enviar")),
+          const SizedBox(height: 20),
           TextFormField(
             controller: response,
           )
