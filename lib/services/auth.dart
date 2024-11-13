@@ -25,7 +25,7 @@ class AuthService {
   }
 
   Future registerWithEmailAndPassword(String email, String password, String name) async {
-    try {
+    {
       // criar usuário no Auth
       print("Tentando cadastrar usuário no Auth");
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
@@ -37,9 +37,6 @@ class AuthService {
         .updateUserData(firebaseUser.uid, email, name, null); //TODO?
 
       return _userFromFirebaseUser(firebaseUser);
-    } catch (e) {
-      print(e.toString());
-      return null;
     }
   }
 

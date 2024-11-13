@@ -2,6 +2,7 @@ import 'package:app_atex_gpt_exam/models/appUser.dart';
 import 'package:app_atex_gpt_exam/screens/1_home/gpt_interface.dart';
 import 'package:app_atex_gpt_exam/shared/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 
 class CreateQuestionPage extends StatefulWidget {
@@ -167,6 +168,7 @@ class QuestaoGerada extends StatelessWidget {
                     const SizedBox(width: 0, height: 12),
                     FilledButton.icon(
                       onPressed: () {
+                        Clipboard.setData(ClipboardData(text: answer));
                         //copia o conteúdo pro clipboard :D
                       }, 
                       icon: const Icon(

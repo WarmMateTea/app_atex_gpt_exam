@@ -43,6 +43,7 @@ class _RegisterState extends State<Register> {
       //     ),
       //   ],
       // ),
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
@@ -115,9 +116,7 @@ class _RegisterState extends State<Register> {
                           error = '';
                         });
 
-                        dynamic result =
-                            await _auth.registerWithEmailAndPassword(
-                                email, password, name);
+                        dynamic result =  await _auth.registerWithEmailAndPassword(email, password, name);
 
                         if (result == null) {
                           setState(() {
@@ -146,7 +145,7 @@ class _RegisterState extends State<Register> {
                       "Já possuí uma conta?",
                       //style: TextStyle(color: Colors.white70),
                     ),
-                    FilledButton(
+                    TextButton(
                       onPressed: () {
                         widget.toggleView();
                       },

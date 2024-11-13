@@ -118,7 +118,7 @@ class _SignInState extends State<SignIn> {
                     const Text(
                       "Não tem uma conta?"
                     ),
-                    FilledButton(
+                    TextButton(
                       onPressed: () {
                         widget.toggleView();
                       },

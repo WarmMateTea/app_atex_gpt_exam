@@ -66,6 +66,12 @@ class DatabaseService {
   // ! motivo: como vc pode ter uma entrada de QA ou AA totalmente vazias (incluindo o UID), quando vc for adicionar um Question/Answer, caso o Aggregator correspondente "não exista" (AKA esteja vazio, AAKA UID vazia/nula), ele deverá ser criado apropriadamente. só então um UPDATE (no Aggregator) vai ter o efeito esperado. eu acho.
   // ! existe uma chance boa (vou testar isso PRIMEIRO) de, como os Aggregators serem documentos muito simples (UID + lista), que um aggregator "vazio" nunca chegue - talvez ele chegue somente com um UID (e uma lista vazia vinda do fromJSON), o que significa que adicionar a Question/Answer nessa lista e meter um update talvez funcione.
 
+  Future<AppUser?> setFullAppUser(AppUser user) async {
+    var collection = FirebaseFirestore.instance.collection('appUserCollection');
+    await collection.doc(user.uid).set(user.toJson());
+    return user;
+  }
+
   // ^ Atualizada
   Future<AppUser?> fetchFullAppUser(String userUID) async {
     print("[database, fetchFullAppUser] DatabaseService: Tentando fetchFullAppUser para o userUID $userUID");
